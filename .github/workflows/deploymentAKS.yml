@@ -41,7 +41,7 @@ jobs:
         
         
       - name: push docker image
-        run: docker push '${{secrets.docker_login}}'/employee-api:v1.0
+        run: docker push '${{secrets.docker_login}}'/orgapp1:v1.0
         
         
       - name: Azure Kubernetes set context
