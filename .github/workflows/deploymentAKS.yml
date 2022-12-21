@@ -34,7 +34,7 @@ jobs:
         run: docker build -t orgapp1 -f dockerfile .
         
       - name: docker login
-        run: docker login --username '${{secrets.docker_login}}' --password '${{secrets.docker_password}}
+        run: docker login --username '${{secrets.DOCKER_LOGIN}}' --password '${{secrets.DOCKER_PASSWORD}}
         
       - name: tag docker image
         run: docker tag employee-api '${{secrets.docker_login}}'/employee-api:v1.0
