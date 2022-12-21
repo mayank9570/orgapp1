@@ -1,0 +1,8 @@
+version: "3.9" 
+services:
+   web:
+       build: .
+       ports:
+           - "5050"
+       environment:
+           MONGODB_URI: mongodb+srv://mayank:shekhar@cluster0.t1hpl.mongodb.net/golangDB?retryWrites=true&w=majority 

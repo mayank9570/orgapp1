@@ -1,0 +1,39 @@
+pipeline {
+   
+      agent any
+      
+     stages {
+     
+          stage('Docker Build') {
+             steps {
+             
+             sh 'docker build -t org-api .'
+             }
+           }
+           
+           stage('Docker tag') {
+           
+           steps {
+           
+           sh 'docker tag org-api mayanks95/org-api:latest'
+           sh 'docker tag org-api mayanks95/org-api:$BUILD_NUMBER'
+           
+           }
+         }
+         
+         stage('Push image to Docker Hub') {
+         
+           steps {
+           
+           sh 'echo $dockerhub_PSW |docker login -u mayanks95 -p mayank@9570'
+           
+           sh 'docker push mayanks95/org-api:latest'
+           
+           sh 'docker push mayanks95/org-api:$BUILD_NUMBER'
+           
+           }
+           
+         }
+      }   
+         
+}
