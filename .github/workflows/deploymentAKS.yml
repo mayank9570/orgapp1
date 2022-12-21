@@ -37,11 +37,11 @@ jobs:
         run: docker login --username '${{secrets.docker_login}}' --password '${{secrets.docker_password}}
         
       - name: tag docker image
-        run: docker tag employee-api '${{secrets.docker_login}}'/employee-api:'${{BUILD_NUMBER}}'
+        run: docker tag employee-api '${{secrets.docker_login}}'/employee-api:v1.0
         
         
       - name: push docker image
-        run: docker push '${{secrets.docker_login}}'/employee-api:'${{BUILD_NUMBER}}'
+        run: docker push '${{secrets.docker_login}}'/employee-api:v1.0
         
         
       - name: Azure Kubernetes set context
@@ -81,7 +81,7 @@ jobs:
           manifests: k8s/deployment.yml
                      sk8/service.yml
           # Fully qualified resource URL of the image(s) to be used for substitutions on the manifest files Example: contosodemo.azurecr.io/helloworld:test
-          images: '${{secrets.docker_login}}/employee-api:${{BUILD_NUMBER}}'
+          images: '${{secrets.docker_login}}/employee-api:v1.0'
           # Name of a docker-registry secret that has already been set up within the cluster. Each of these secret names are added under imagePullSecrets field for the workloads found in the input manifest files
           imagepullsecrets: docker-image-pull-secret
           
