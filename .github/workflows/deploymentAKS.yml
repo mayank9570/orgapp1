@@ -1,0 +1,88 @@
+name: AKS Deployment
+
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      
+    
+      - name: Setup Go environment
+        uses: actions/setup-go@v3.5.0
+        with:
+    # The Go version to download (if necessary) and use. Supports semver spec and ranges.
+         go-version: 1.18.2
+    # Path to the go.mod or go.work file.
+      
+      
+      - name: go build
+      
+        run: go build -o ./orgapp1
+        
+      - name: docker build
+        run: docker build -t orgapp1 -f dockerfile .
+        
+      - name: docker login
+        run: docker login --username '${{secrets.docker_login}}' --password '${{secrets.docker_password}}
+        
+      - name: tag docker image
+        run: docker tag employee-api '${{secrets.docker_login}}'/employee-api:'${{BUILD_NUMBER}}'
+        
+        
+      - name: push docker image
+        run: docker push '${{secrets.docker_login}}'/employee-api:'${{BUILD_NUMBER}}'
+        
+        
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v3
+        with:
+           # Resource Group Name
+           resource-group: resource-group-name
+           # AKS Cluster Name
+           cluster-name: cluster- name
+           # AKS Cluster Subscription
+           subscription: # optional
+           # Get cluster admin credentials. Values: true or false
+           admin: # optional
+           # Enables kubelogin for non-admin user scenario. Values: true or false
+           use-kubelogin: # optional
+           
+           
+      - name: Create secret in Kubernetes cluster
+        uses: Azure/k8s-create-secret@v4.0
+        with:
+         # Type of Kubernetes secret. Defaults to 'kubernetes.io/dockerconfigjson'.
+          secret-type: docker registry
+         # Name of the secret. You can use this secret name in the Kubernetes YAML configuration file.
+          secret-name: docker-image-pull-secret
+         # Container Registry URL
+          container-registry-url: https //index.docker.io/v1/
+         # Container Registry user name
+          container-registry-username: '${{secrets.docker_login}}'
+         # Container Registry password
+          container-registry-password: '${{secrets.docker_password}}'
+          
+          
+          
+      - name: Deploy to Kubernetes cluster
+        uses: Azure/k8s-deploy@v4
+        with:
+          manifests: k8s/deployment.yml
+                     sk8/service.yml
+          # Fully qualified resource URL of the image(s) to be used for substitutions on the manifest files Example: contosodemo.azurecr.io/helloworld:test
+          images: '${{secrets.docker_login}}/employee-api:${{BUILD_NUMBER}}'
+          # Name of a docker-registry secret that has already been set up within the cluster. Each of these secret names are added under imagePullSecrets field for the workloads found in the input manifest files
+          imagepullsecrets: docker-image-pull-secret
+          
+          action: deploy
