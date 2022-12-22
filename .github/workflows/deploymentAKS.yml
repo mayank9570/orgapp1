@@ -41,7 +41,7 @@ jobs:
         
         
       - name: push docker image
-        run: docker push '${{secrets.docker_login}}'/orgapp1:v1.0
+        run: docker push '${{secrets.DOCKER_LOGIN}}'/orgapp1:v1.0
         
         
       - name: Azure Kubernetes set context
@@ -69,9 +69,9 @@ jobs:
          # Container Registry URL
           container-registry-url: https //index.docker.io/v1/
          # Container Registry user name
-          container-registry-username: '${{secrets.docker_login}}'
+          container-registry-username: '${{secrets.DOCKER_LOOGIN}}'
          # Container Registry password
-          container-registry-password: '${{secrets.docker_password}}'
+          container-registry-password: '${{secrets.DOCKER_PASSWORD}}'
           
           
           
