@@ -7,7 +7,11 @@ on:
   pull_request:
     branches: [main]
     
-    
+env:
+
+      app_name: orgapp1
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,22 +30,20 @@ jobs:
     # Path to the go.mod or go.work file.
       
       
-      - name: go build
-      
-        run: go build -o ./orgapp1
+     
         
       - name: docker build
-        run: docker build -t orgapp1 -f dockerfile .
+        run: docker build -t '${{env.app_name}}' -f dockerfile .
         
       - name: docker login
         run: docker login --username '${{secrets.DOCKER_LOGIN}}' --password '${{secrets.DOCKER_PASSWORD}}'
         
       - name: tag docker image
-        run: docker tag orgapp1 '${{secrets.DOCKER_LOGIN}}'/orgapp1:v1.0
+        run: docker tag '${{env.app_name}}' '${{secrets.DOCKER_LOGIN}}'/'${{env.app_name}}:v1.0
         
         
       - name: push docker image
-        run: docker push '${{secrets.DOCKER_LOGIN}}'/orgapp1:v1.0
+        run: docker push '${{secrets.DOCKER_LOGIN}}'/'${{env.app_name}}':v1.0
         
         
       - name: Azure Kubernetes set context
