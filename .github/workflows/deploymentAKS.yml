@@ -39,7 +39,7 @@ jobs:
         run: docker login --username '${{secrets.DOCKER_LOGIN}}' --password '${{secrets.DOCKER_PASSWORD}}'
         
       - name: tag docker image
-        run: docker tag '${{env.app_name}}' '${{secrets.DOCKER_LOGIN}}'/'${{env.app_name}}:v1.0
+        run: docker tag '${{env.app_name}}' '${{secrets.DOCKER_LOGIN}}'/'${{env.app_name}}':v1.0
         
         
       - name: push docker image
